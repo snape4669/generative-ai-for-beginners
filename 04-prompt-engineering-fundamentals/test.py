@@ -1,29 +1,31 @@
 # The OpenAI SDK was updated on Nov 8, 2023 with new guidance for migration
 # See: https://github.com/openai/openai-python/discussions/742
 
-## Updated
+#Note: The openai-python library support for Azure OpenAI is in preview.
+#Note: This code sample requires OpenAI Python library version 1.0.0 or higher.
 import os
 from openai import AzureOpenAI
 from dotenv import load_dotenv
 load_dotenv()
 
 client = AzureOpenAI(
-  api_key=os.environ['AZURE_OPENAI_KEY'],  # this is also the default, it can be omitted
-  api_version = "2023-05-15"
-  )
-
-deployment=os.environ['AZURE_OPENAI_DEPLOYMENT']
-
+  azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT"),
+  api_key=os.getenv("AZURE_OPENAI_KEY"),
+  api_version="2024-02-15-preview"
+)
 ## Updated
 def get_completion(prompt):
-    messages = [{"role": "user", "content": prompt}]       
-    response = client.chat.completions.create(   
-        model=deployment,                                         
-        messages=messages,
-        temperature=0, # this is the degree of randomness of the model's output
-        max_tokens=1024
+    messages_text = [{"role": "user", "content": prompt}]       
+    completion = client.chat.completions.create(
+      model="test", # model = "deployment_name"
+      messages = messages_text,
+      temperature=0.7,
+      max_tokens=800,
+      top_p=0.95,
+      frequency_penalty=0,
+      presence_penalty=0,
+      stop=None
     )
-    return response.choices[0].message.content
 
 ## ---------- Call the helper method
 
